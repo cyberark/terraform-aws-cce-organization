@@ -1,0 +1,12 @@
+**/.terraform/*
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.out
+MODULE_DOCUMENTATION.md
+.idea/
+package*
+.remarkrc.json
+node_modules/
+.tflint.hcl
