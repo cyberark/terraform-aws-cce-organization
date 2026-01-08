@@ -6,20 +6,11 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.0.0"
     }
-    idsec = {
-      source  = "cyberark/idsec"
-      version = ">= 1.0.0"
-    }
   }
 }
 
 provider "aws" {
   region = "us-east-1"
-}
-
-provider "idsec" {
-  # Configure your CyberArk credentials here or via environment variables
-  # See: https://registry.terraform.io/providers/cyberark/idsec/latest/docs
 }
 
 module "cyberark_org" {
@@ -29,10 +20,5 @@ module "cyberark_org" {
   management_account_id = var.management_account_id
   organization_root_id  = var.organization_root_id
   display_name          = var.display_name
-
-  # Enable SIA (Secure Infrastructure Access) 
-  sia = {
-    enable = true
-  }
 }
 
