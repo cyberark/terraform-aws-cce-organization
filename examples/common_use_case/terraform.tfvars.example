@@ -4,3 +4,9 @@ management_account_id = "123456789012"
 organization_root_id  = "r-abcd"
 display_name          = "My organization"
 
+# SCA configuration
+# Set to true if you have AWS IAM Identity Center configured
+sca_sso_enable = false
+# sca_sso_region is only required when sca_sso_enable = true
+# sca_sso_region = "us-east-1"
+
