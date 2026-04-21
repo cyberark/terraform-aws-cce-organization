@@ -348,9 +348,9 @@ If migrating from an earlier version:
 
 This module includes the following sub-modules:
 
-* `services_modules/cce` - CCE organization scanning
-* `services_modules/sia` - Secure Infrastructure Access
-* `services_modules/sca` - Secure Cloud Access
+* `modules/cce` - CCE organization scanning
+* `modules/sia` - Secure Infrastructure Access
+* `modules/sca` - Secure Cloud Access
 
 ## Documentation
 

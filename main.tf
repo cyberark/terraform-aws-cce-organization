@@ -33,7 +33,7 @@ resource "terraform_data" "validate_management_account" {
 data "idsec_cce_aws_tenant_service_details" "get_tenant_data" {}
 
 module "cce" {
-  source                         = "./services_modules/cce"
+  source                         = "./modules/cce"
   deploy_prefix                  = local.deploy_prefix
   cce_aws_account_number         = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.cce.service_account_id
   cross_account_role_external_id = local.role_external_id
@@ -41,7 +41,7 @@ module "cce" {
 }
 
 module "sia" {
-  source                 = "./services_modules/sia"
+  source                 = "./modules/sia"
   dpa_service_account_id = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.dpa.service_account_id
   tenant_id              = data.idsec_cce_aws_tenant_service_details.get_tenant_data.tenant_id
   count                  = var.sia.enable != false ? 1 : 0
@@ -49,7 +49,7 @@ module "sia" {
 }
 
 module "sca" {
-  source                 = "./services_modules/sca"
+  source                 = "./modules/sca"
   sca_service_stage      = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_stage
   sca_service_account_id = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_account_id
   tenant_id              = data.idsec_cce_aws_tenant_service_details.get_tenant_data.tenant_id
