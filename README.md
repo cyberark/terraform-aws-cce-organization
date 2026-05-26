@@ -12,15 +12,17 @@ This module automates the onboarding of your AWS organization's management accou
 * **Organization Discovery**: Automatic scanning and monitoring of your AWS organization structure
 * **Identity Security**: Federated access management through Secure Cloud Access (SCA)
 * **Privileged Access**: Just-in-time access to AWS resources with Secure Infrastructure Access (SIA)
+* **Secrets Management**: Centralized secrets synchronization with Secrets Hub
 
 This module creates the necessary IAM roles and policies in your AWS management account and registers your organization with the selected services.
 
 ## Features
 
 * ✅ Automated AWS organization onboarding to CCE
-* ✅ Modular service enablement (CCE, SIA, SCA)
+* ✅ Modular service enablement (CCE, SIA, SCA, Secrets Hub)
 * ✅ Cross-account IAM role creation with secure external ID patterns
 * ✅ Support for AWS IAM Identity Center (SSO) integration
+* ✅ Support for AWS Secrets Manager integration with Secrets Hub
 * ✅ Input validation for production safety
 * ✅ Comprehensive outputs for integration with other modules
 
@@ -52,8 +54,8 @@ Before using this module, ensure that you have the following information and req
 ### Basic Usage with SIA (Management Account)
 
 ```hcl
-module "cyberark_org" {
-  source = "path/to/terraform-aws-cce-organization"
+module "cce_org" {
+  source = "cyberark/cce-organization/aws"
 
   organization_id       = "o-1234567890"
   management_account_id = "123456789012"
@@ -70,8 +72,8 @@ module "cyberark_org" {
 ### Production Setup with SCA
 
 ```hcl
-module "cyberark_org" {
-  source = "path/to/terraform-aws-cce-organization"
+module "cce_org" {
+  source = "cyberark/cce-organization/aws"
    
   organization_id       = "o-1234567890"
   management_account_id = "123456789012"
@@ -86,17 +88,37 @@ module "cyberark_org" {
 }
 ```
 
+### Secrets Management with Secrets Hub
+
+```hcl
+module "cce_org" {
+  source = "cyberark/cce-organization/aws"
+   
+  organization_id       = "o-1234567890"
+  management_account_id = "123456789012"
+  organization_root_id  = "r-abcd"
+  display_name          = "My Organization"
+   
+  # Enable CyberArk Secrets Hub
+  secrets_hub = {
+    enable                  = true
+    secrets_manager_regions = ["us-east-1", "us-west-2", "eu-west-1"]
+  }
+}
+```
+
 See the [examples](./examples) directory for more detailed configurations.
 
 ## Examples
 
-Three production-ready examples are provided:
+Four production-ready examples are provided:
 
 | Example | Description | Use Case |
 |---------|-------------|----------|
 | [basic](./examples/basic/) | SIA only | Initial onboarding with just-in-time privileged access |
 | [full\_services](./examples/full_services/) | SIA + SCA with SSO | Comprehensive security coverage |
 | [common\_use\_case](./examples/common_use_case/) | SCA only | Typical enterprise deployment with cloud entitlements management |
+| [secrets\_hub](./examples/secrets_hub/) | Secrets Hub only | Centralized secrets management with AWS Secrets Manager |
 
 ## Services
 
@@ -141,6 +163,40 @@ sia = {
 
 **Note**: SIA was previously called DPA (Dynamic Privileged Access). The name "dpa" is still used internally for backward compatibility.
 
+### Secrets Hub
+
+**Optional** - Enable for centralized secrets management and synchronization between PAM and AWS Secrets Manager.
+
+```hcl
+secrets_hub = {
+  enable                  = true
+  secrets_manager_regions = ["us-east-1", "us-west-2"]  # List of AWS regions where secrets can be created
+}
+```
+
+**Resources Created**:
+
+* IAM role: `CyberArk-Secrets-Hub-AllowSecretsAccessRole-{unique-suffix}`
+* IAM policy: `CyberArk-Secrets-Hub-AllowSecretsAccessPolicy`
+* Permissions for creating, updating, and managing secrets in specified regions
+
+**Use Cases**:
+
+* Synchronize secrets from PAM vault to AWS Secrets Manager
+* Centralized secrets lifecycle management
+* Automated secret rotation across cloud and on-premises environments
+* Compliance and audit trail for secrets access
+
+**Configuration**:
+
+* `enable`: Set to `true` to enable Secrets Hub integration
+* `secrets_manager_regions`: List of AWS regions where Secrets Hub can create and manage secrets. Only secrets in these regions will be accessible to Secrets Hub.
+
+**Important Notes**:
+* Secrets created by Secrets Hub are automatically tagged with `Sourced by CyberArk`
+* Only secrets with this tag can be managed by Secrets Hub
+* Extended access can be granted by adding the `CyberArk Extended Access: true` tag to secrets
+
 ### SCA (Secure Cloud Access)
 
 **Optional** - Enable for identity federation and access management.
@@ -175,6 +231,7 @@ sca = {
 | `display_name` | Display name for the organization | `string` | No | `null` |
 | `sia` | SIA configuration | `object` | No | `{ enable = false }` |
 | `sca` | SCA configuration | `object` | No | `{ enable = false, sso_enable = false, sso_region = null }` |
+| `secrets_hub` | Secrets Hub configuration | `object` | No | `{ enable = false, secrets_manager_regions = [] }` |
 
 ### Service Configuration Objects
 
@@ -196,6 +253,15 @@ sca = {
 }
 ```
 
+#### Secrets Hub Configuration
+
+```hcl
+secrets_hub = {
+  enable                  = bool           # Enable Secrets Hub
+  secrets_manager_regions = list(string)   # List of AWS regions for secrets management (e.g., ["us-east-1", "us-west-2"])
+}
+```
+
 ## Outputs
 
 | Name | Description |
@@ -204,6 +270,7 @@ sca = {
 | `cce_scan_role_arn` | The IAM role ARN for CCE organization scanning (created in management account) |
 | `dpa_role_arn` | The IAM role ARN created for Secure Infrastructure Access (SIA) - note: output name uses 'dpa' for backward compatibility |
 | `sca_role_arn` | The IAM role ARN created for Secure Cloud Access |
+| `secrets_hub_role_arn` | The IAM role ARN created for CyberArk Secrets Hub |
 
 ## Security Considerations
 
@@ -214,6 +281,7 @@ This module implements secure external ID patterns to prevent confused deputy at
 * **CCE**: `cyberark-{tenant-id}`
 * **SIA**: `{tenant-id}`
 * **SCA**: `{tenant-id}-{account-id}`
+* **Secrets Hub**: `{tenant-id}-{account-id}`
 
 External IDs are automatically generated and should not be shared publicly.
 
@@ -224,6 +292,7 @@ All IAM policies follow the principle of least privilege:
 * **CCE**: Read-only access to organizations and CloudFormation template
 * **SIA**: Read-only access to EC2 instances and regions
 * **SCA**: Role and SAML provider management
+* **Secrets Hub**: Permissions limited to creating, updating, and managing secrets in specified regions with required tags
 
 ### Trust Relationships
 
@@ -351,6 +420,7 @@ This module includes the following sub-modules:
 * `modules/cce` - CCE organization scanning
 * `modules/sia` - Secure Infrastructure Access
 * `modules/sca` - Secure Cloud Access
+* `modules/secrets_hub` - Secrets Hub integration
 
 ## Documentation
 

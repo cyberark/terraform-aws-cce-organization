@@ -22,8 +22,9 @@ provider "idsec" {
   # See: https://registry.terraform.io/providers/cyberark/idsec/latest/docs
 }
 
-module "cyberark_org" {
-  source = "../../"
+module "cce_org" {
+  source  = "cyberark/cce-organization/aws"
+  version = "0.2.1"
 
   # Organization configuration
   organization_id       = var.organization_id

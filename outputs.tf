@@ -1,5 +1,5 @@
 output "org_onboarding_id" {
-  description = "The AWS Organization Onboarding ID from CyberArk CCE (use this ID when adding accounts to the organization)"
+  description = "The AWS Organization Onboarding ID from CCE (use this ID when adding accounts to the organization)"
   value       = try(idsec_cce_aws_organization.create_org[0].id, null)
 }
 
@@ -16,5 +16,10 @@ output "dpa_role_arn" {
 output "sca_role_arn" {
   description = "IAM role ARN for Secure Cloud Access"
   value       = try(module.sca[0].deployed_resources.main, null)
+}
+
+output "secrets_hub_role_arn" {
+  description = "IAM role ARN for Secrets Hub"
+  value       = try(module.secrets_hub[0].deployed_resources.main, null)
 }
 

@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.0"
+      version = ">= 5.0.0"
     }
     idsec = {
       source  = "cyberark/idsec"
@@ -18,13 +18,12 @@ provider "aws" {
 }
 
 provider "idsec" {
-  # Configure your CyberArk credentials here or via environment variables
+  # Configure your Identity credentials here or via environment variables
   # See: https://registry.terraform.io/providers/cyberark/idsec/latest/docs
 }
 
 module "cce_org" {
-  source  = "cyberark/cce-organization/aws"
-  version = "0.2.1"
+  source = "../../"
 
   # Organization configuration
   organization_id       = var.organization_id
@@ -32,16 +31,9 @@ module "cce_org" {
   organization_root_id  = var.organization_root_id
   display_name          = var.display_name
 
-  # Enable SIA (Secure Infrastructure Access)
-  sia = {
-    enable = true
-  }
-
-  # Enable SCA (Secure Cloud Access) with SSO
-  sca = {
-    enable     = true
-    sso_enable = true
-    sso_region = var.sca_sso_region
+  # Enable Secrets Hub
+  secrets_hub = {
+    enable                  = true
+    secrets_manager_regions = var.secrets_manager_regions
   }
 }
-

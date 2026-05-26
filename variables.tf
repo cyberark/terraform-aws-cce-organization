@@ -76,3 +76,18 @@ variable "sca" {
   }
 }
 
+variable "secrets_hub" {
+  description = "Configuration for the Secrets Hub feature."
+  type = object({
+    enable                  = optional(bool, true)
+    secrets_manager_regions = optional(list(string), null)
+  })
+  default = {
+    enable                  = false
+    secrets_manager_regions = []
+  }
+  validation {
+    condition     = var.secrets_hub.enable == false ? true : (var.secrets_hub.secrets_manager_regions != null && length(var.secrets_hub.secrets_manager_regions) > 0)
+    error_message = "secrets_manager_regions must not be empty when secrets_hub enable is set to true."
+  }
+}

@@ -1,0 +1,13 @@
+# AWS Organization Configuration
+organization_id       = "o-1234567890"
+management_account_id = "123456789012"
+organization_root_id  = "r-abcd"
+display_name          = "My Organization"
+
+# Secrets Hub Configuration
+# List of AWS regions where Secrets Hub can create and manage secrets
+secrets_manager_regions = [
+  "us-east-1",
+  "us-west-2",
+  "eu-west-1"
+]

@@ -17,7 +17,6 @@ terraform {
   }
 }
 
-
 data "aws_caller_identity" "current" {}
 
 locals {
@@ -26,7 +25,7 @@ locals {
   tenant_id                  = data.idsec_cce_aws_tenant_service_details.get_tenant_data.tenant_id
   role_external_id           = "${local.deploy_prefix}-${local.tenant_id}"
   organization_display_name  = var.display_name == null ? var.organization_id : var.display_name
-  at_least_1_service_enabled = var.sca.enable || var.sia.enable
+  at_least_1_service_enabled = var.sca.enable || var.sia.enable || var.secrets_hub.enable
 
   # Validation: Ensure this module is deployed from Management Account
   is_management_account = local.account_id == var.management_account_id
@@ -45,6 +44,16 @@ locals {
         ssoEnable       = tostring(var.sca.sso_enable),
         ssoRegion       = var.sca.sso_enable ? var.sca.sso_region : null
       }
+    }] : [],
+
+    var.secrets_hub.enable ? [{
+      service_name = "secrets_hub"
+      resources = {
+        "SecretsHubCustomerAccessRole" = module.secrets_hub[0].deployed_resources.main,
+        "SecretsHubGlobalRole"         = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.secrets_hub.global_role_arn
+
+      }
+
     }] : []
   ])
 }
@@ -76,6 +85,15 @@ module "cce" {
   cce_aws_account_number         = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.cce.service_account_id
   cross_account_role_external_id = local.role_external_id
   count                          = local.at_least_1_service_enabled ? 1 : 0
+}
+
+module "secrets_hub" {
+  source                        = "./modules/secrets_hub"
+  cyberark_secrets_hub_role_arn = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.secrets_hub.global_role_arn
+  secrets_manager_regions       = var.secrets_hub.secrets_manager_regions != null ? var.secrets_hub.secrets_manager_regions : []
+  account_id                    = local.account_id
+  tenant_id                     = local.tenant_id
+  count                         = var.secrets_hub.enable != false ? 1 : 0
 }
 
 module "sia" {
@@ -123,4 +141,15 @@ resource "idsec_cce_aws_organization" "create_org" {
   depends_on = [time_sleep.wait_for_modules]
 
   services = local.services_list
+
+  # Service-specific parameters (separate from resources)
+  service_parameters = merge(
+    # Secrets Hub parameters
+    var.secrets_hub.enable != false ? {
+      secrets_hub = {
+        "SecretsManagerRegions" = var.secrets_hub.secrets_manager_regions
+      }
+    } : {}
+
+  )
 }

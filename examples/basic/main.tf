@@ -13,8 +13,9 @@ provider "aws" {
   region = "us-east-1"
 }
 
-module "cyberark_org" {
-  source = "../../"
+module "cce_org" {
+  source  = "cyberark/cce-organization/aws"
+  version = "0.2.1"
 
   organization_id       = var.organization_id
   management_account_id = var.management_account_id
