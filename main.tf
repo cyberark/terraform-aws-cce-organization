@@ -19,6 +19,8 @@ terraform {
 
 data "aws_caller_identity" "current" {}
 
+data "idsec_cce_aws_tenant_service_details" "get_tenant_data" {}
+
 locals {
   account_id                 = data.aws_caller_identity.current.account_id
   deploy_prefix              = "CCE"
@@ -26,6 +28,7 @@ locals {
   role_external_id           = "${local.deploy_prefix}-${local.tenant_id}"
   organization_display_name  = var.display_name == null ? var.organization_id : var.display_name
   at_least_1_service_enabled = var.sca.enable || var.sia.enable || var.secrets_hub.enable
+  sca_service_region         = var.sca.enable ? data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_region : null
 
   # Validation: Ensure this module is deployed from Management Account
   is_management_account = local.account_id == var.management_account_id
@@ -77,8 +80,6 @@ resource "terraform_data" "validate_management_account" {
   }
 }
 
-data "idsec_cce_aws_tenant_service_details" "get_tenant_data" {}
-
 module "cce" {
   source                         = "./modules/cce"
   deploy_prefix                  = local.deploy_prefix
@@ -109,6 +110,7 @@ module "sca" {
   source                 = "./modules/sca"
   sca_service_stage      = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_stage
   sca_service_account_id = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_account_id
+  sca_service_region     = local.sca_service_region
   tenant_id              = local.tenant_id
   sso_enable             = var.sca.sso_enable
   sso_region             = var.sca.sso_enable ? var.sca.sso_region : null
@@ -145,6 +147,11 @@ resource "idsec_cce_aws_organization" "create_org" {
 
   # Service-specific parameters (separate from resources)
   service_parameters = merge(
+    var.sca.enable ? {
+      sca = {
+        sca_service_region = local.sca_service_region
+      }
+    } : {},
     # Secrets Hub parameters
     var.secrets_hub.enable != false ? {
       secrets_hub = {
@@ -153,4 +160,5 @@ resource "idsec_cce_aws_organization" "create_org" {
     } : {}
 
   )
+
 }

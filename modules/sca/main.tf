@@ -11,26 +11,29 @@ terraform {
 data "aws_caller_identity" "current" {}
 
 locals {
-  account_id = data.aws_caller_identity.current.account_id
+  account_id             = data.aws_caller_identity.current.account_id
+  is_america_region      = contains(["us-east-1", "us-west-2"], var.sca_service_region)
+  region_suffix          = local.is_america_region ? "" : "-${var.sca_service_region}"
+  sca_provision_role_arn = "arn:aws:iam::${var.sca_service_account_id}:role/sca-provision-role-${var.sca_service_stage}${local.region_suffix}"
   sca_cross_account_iam_role_name = (
     var.custom_role_name != null && var.custom_role_name != ""
     ? "${var.custom_role_name}-${local.account_id}"
-    : "CyberArkRoleSCA${local.account_id}-${var.tenant_id}"
+    : "SCARole-${local.account_id}-${var.tenant_id}"
   )
   sca_cross_account_managed_policy_name = (
     var.custom_role_name != null && var.custom_role_name != ""
     ? "${var.custom_role_name}${local.account_id}ForSCAPolicy"
-    : "CyberArkPolicyAccountForSCA${local.account_id}-${var.tenant_id}"
+    : "SCAPolicy-${local.account_id}-${var.tenant_id}"
   )
   sca_account_permissions_managed_policy_name = (
     var.custom_role_name != null && var.custom_role_name != ""
     ? "${var.custom_role_name}${local.account_id}ForSCAIAMPolicy"
-    : "CyberarkIAMAccountPermissionsPolicyForSCA${local.account_id}-${var.tenant_id}"
+    : "SCAPermissionsPolicy-${local.account_id}-${var.tenant_id}"
   )
   sca_cross_account_sso_policy_name = (
     var.custom_role_name != null && var.custom_role_name != ""
     ? "${var.custom_role_name}${local.account_id}ForSCASSOPolicy"
-    : "CyberArkPolicySSOForSCA${local.account_id}-${var.tenant_id}"
+    : "SCASSOPermissionsPolicy-${local.account_id}-${var.tenant_id}"
   )
 }
 
@@ -38,34 +41,25 @@ locals {
 # DATA #
 ########
 
-data "aws_iam_policy_document" "cyberark_sca_cross_account_assume_role_policy" {
+data "aws_iam_policy_document" "sca_cross_account_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRole"]
 
     principals {
       type        = "AWS"
-      identifiers = ["arn:aws:iam::${var.sca_service_account_id}:root"]
+      identifiers = [local.sca_provision_role_arn]
     }
 
     condition {
-      test     = "StringLike"
+      test     = "StringEquals"
       variable = "sts:ExternalId"
-      values   = ["${var.tenant_id}-*"]
-    }
-
-    condition {
-      test     = "StringLike"
-      variable = "aws:PrincipalArn"
-      values = [
-        "arn:aws:iam::${var.sca_service_account_id}:role/sca-provision-role*",
-        "arn:aws:iam::${var.sca_service_account_id}:role/sca-provision-role-${var.sca_service_stage}"
-      ]
+      values   = ["${var.tenant_id}-${local.account_id}"]
     }
   }
 }
 
 
-data "aws_iam_policy_document" "cyberark_sca_cross_account_policy_document" {
+data "aws_iam_policy_document" "sca_cross_account_policy_document" {
   statement {
     sid       = "scapolicyallowtag"
     effect    = "Allow"
@@ -82,7 +76,7 @@ data "aws_iam_policy_document" "cyberark_sca_cross_account_policy_document" {
   }
 }
 
-data "aws_iam_policy_document" "cyberark_account_permissions_policy_document" {
+data "aws_iam_policy_document" "sca_account_permissions_policy_document" {
   statement {
     sid    = "scapolicyaccountpermissions"
     effect = "Allow"
@@ -102,7 +96,7 @@ data "aws_iam_policy_document" "cyberark_account_permissions_policy_document" {
   }
 }
 
-data "aws_iam_policy_document" "cyberark_sca_cross_account_sso_policy_document" {
+data "aws_iam_policy_document" "sca_cross_account_sso_policy_document" {
   statement {
     sid    = "scassopermissions"
     effect = "Allow"
@@ -142,48 +136,48 @@ data "aws_iam_policy_document" "cyberark_sca_cross_account_sso_policy_document" 
     resources = ["*"]
   }
 }
-resource "aws_iam_role" "cyberark_sca_cross_account_assume_role" {
+resource "aws_iam_role" "sca_cross_account_assume_role" {
   name               = local.sca_cross_account_iam_role_name
-  assume_role_policy = data.aws_iam_policy_document.cyberark_sca_cross_account_assume_role_policy.json
+  assume_role_policy = data.aws_iam_policy_document.sca_cross_account_assume_role_policy.json
 
   lifecycle {
     ignore_changes = [name]
   }
 }
 
-resource "aws_iam_policy" "cyberark_sca_cross_account_policy" {
+resource "aws_iam_policy" "sca_cross_account_policy" {
   name        = local.sca_cross_account_managed_policy_name
   description = "The policy contains sca cross account permissions"
-  policy      = data.aws_iam_policy_document.cyberark_sca_cross_account_policy_document.json
+  policy      = data.aws_iam_policy_document.sca_cross_account_policy_document.json
 }
 
-resource "aws_iam_policy" "cyberark_account_permissions_policy" {
+resource "aws_iam_policy" "sca_account_permissions_policy" {
   count       = var.sso_enable == false ? 1 : 0
   name        = local.sca_account_permissions_managed_policy_name
   description = "The policy contains sca IAM account permissions"
-  policy      = data.aws_iam_policy_document.cyberark_account_permissions_policy_document.json
+  policy      = data.aws_iam_policy_document.sca_account_permissions_policy_document.json
 }
 
-resource "aws_iam_policy" "cyberark_sca_cross_account_sso_policy" {
+resource "aws_iam_policy" "sca_cross_account_sso_policy" {
   count       = var.sso_enable == true ? 1 : 0
   name        = local.sca_cross_account_sso_policy_name
   description = "The policy contains sca cross account sso permissions"
-  policy      = data.aws_iam_policy_document.cyberark_sca_cross_account_sso_policy_document.json
+  policy      = data.aws_iam_policy_document.sca_cross_account_sso_policy_document.json
 }
 
-resource "aws_iam_role_policy_attachment" "cyberark_sca_cross_account_role_attached_to_policy" {
-  role       = aws_iam_role.cyberark_sca_cross_account_assume_role.name
-  policy_arn = aws_iam_policy.cyberark_sca_cross_account_policy.arn
+resource "aws_iam_role_policy_attachment" "sca_cross_account_role_attached_to_policy" {
+  role       = aws_iam_role.sca_cross_account_assume_role.name
+  policy_arn = aws_iam_policy.sca_cross_account_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "cyberark_sca_cross_account_role_attached_to_account_permissions_policy" {
+resource "aws_iam_role_policy_attachment" "sca_cross_account_role_attached_to_account_permissions_policy" {
   count      = var.sso_enable == false ? 1 : 0
-  role       = aws_iam_role.cyberark_sca_cross_account_assume_role.name
-  policy_arn = aws_iam_policy.cyberark_account_permissions_policy[count.index].arn
+  role       = aws_iam_role.sca_cross_account_assume_role.name
+  policy_arn = aws_iam_policy.sca_account_permissions_policy[count.index].arn
 }
 
-resource "aws_iam_role_policy_attachment" "cyberark_sca_cross_account_role_attached_to_sso_policy" {
+resource "aws_iam_role_policy_attachment" "sca_cross_account_role_attached_to_sso_policy" {
   count      = var.sso_enable == true ? 1 : 0
-  role       = aws_iam_role.cyberark_sca_cross_account_assume_role.name
-  policy_arn = aws_iam_policy.cyberark_sca_cross_account_sso_policy[count.index].arn
+  role       = aws_iam_role.sca_cross_account_assume_role.name
+  policy_arn = aws_iam_policy.sca_cross_account_sso_policy[count.index].arn
 }

@@ -69,7 +69,7 @@ Automatically enabled - provides organization scanning and account discovery.
 
 * **CCE**: IAM role in management account for organization scanning
 * **SIA**: IAM role for EC2 instance discovery and access
-* **SCA**: IAM role for identity and access management (with SSO permissions)
+* **SCA**: IAM role `SCARole-{account-id}-{tenant-id}`, policy `SCAPolicy-{account-id}-{tenant-id}`; `SCAPermissionsPolicy-{account-id}-{tenant-id}` when `sso_enable = false`, `SCASSOPermissionsPolicy-{account-id}-{tenant-id}` when `sso_enable = true`
 
 ### In CCE
 

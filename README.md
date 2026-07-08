@@ -211,9 +211,10 @@ sca = {
 
 **Resources Created**:
 
-* IAM role: `CyberArkRoleSCA-{account-id}`
-* IAM policy for SAML provider and role management
-* (Optional) IAM policy for AWS IAM Identity Center integration
+* IAM role: `SCARole-{account-id}-{tenant-id}`
+* IAM policy: `SCAPolicy-{account-id}-{tenant-id}`
+* IAM permissions policy: `SCAPermissionsPolicy-{account-id}-{tenant-id}` (when `sso_enable = false`)
+* IAM SSO policy: `SCASSOPermissionsPolicy-{account-id}-{tenant-id}` (when `sso_enable = true`)
 
 **Use Cases**:
 

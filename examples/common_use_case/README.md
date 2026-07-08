@@ -77,7 +77,7 @@ Automatically enabled - provides organization scanning and account discovery.
 ### In AWS
 
 * **CCE**: IAM role in management account for organization scanning
-* **SCA**: IAM role for identity and access management
+* **SCA**: IAM role `SCARole-{account-id}-{tenant-id}` and policies `SCAPolicy-{account-id}-{tenant-id}`, `SCAPermissionsPolicy-{account-id}-{tenant-id}`
 
 ### In CCE
 
