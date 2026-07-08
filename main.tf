@@ -91,6 +91,7 @@ module "secrets_hub" {
   source                        = "./modules/secrets_hub"
   cyberark_secrets_hub_role_arn = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.secrets_hub.global_role_arn
   secrets_manager_regions       = var.secrets_hub.secrets_manager_regions != null ? var.secrets_hub.secrets_manager_regions : []
+  secrets_hub_origin_ip         = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.secrets_hub.origin_ip
   account_id                    = local.account_id
   tenant_id                     = local.tenant_id
   count                         = var.secrets_hub.enable != false ? 1 : 0
