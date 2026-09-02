@@ -8,7 +8,7 @@ terraform {
     }
     idsec = {
       source  = "cyberark/idsec"
-      version = "~> 0.2.1"
+      version = "0.10.0"
     }
     time = {
       source  = "hashicorp/time"
@@ -37,11 +37,13 @@ locals {
   services_list = flatten([
     var.sia.enable ? [{
       service_name = "dpa"
+      version      = "0.0.2"
       resources    = { DpaRoleArn = module.sia[0].deployed_resources.main }
     }] : [],
 
     var.sca.enable ? [{
       service_name = "sca"
+      version      = "0.0.4"
       resources = {
         scaPowerRoleArn = module.sca[0].deployed_resources.main,
         ssoEnable       = tostring(var.sca.sso_enable),
@@ -51,6 +53,7 @@ locals {
 
     var.secrets_hub.enable ? [{
       service_name = "secrets_hub"
+      version      = "0.0.7"
       resources = {
         "SecretsHubCustomerAccessRole" = module.secrets_hub[0].deployed_resources.main,
         "SecretsHubGlobalRole"         = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.secrets_hub.global_role_arn
