@@ -57,17 +57,20 @@ variable "sia" {
 }
 
 variable "sca" {
-  description = "Configuration for the SCA (Secure Cloud Access) feature."
+  description = "Configuration for the SCA (Secure Cloud Access) feature. add_permissions_to_manage_cluster stores addPermissionsToManageCluster in org onboarding parameters for member-account add-account modules (EKS permissions on mgmt account role when true)."
   type = object({
-    enable     = optional(bool, true)
-    sso_enable = optional(bool, false)
-    sso_region = optional(string, null)
-    role_name  = optional(string, null)
+    enable                            = optional(bool, true)
+    sso_enable                        = optional(bool, false)
+    sso_region                        = optional(string, null)
+    role_name                         = optional(string, null)
+    add_permissions_to_manage_cluster = optional(bool, false)
   })
   default = {
-    enable     = false
-    sso_enable = false
-    sso_region = null
+    enable                            = false
+    sso_enable                        = false
+    sso_region                        = null
+    role_name                         = null
+    add_permissions_to_manage_cluster = false
   }
 
   validation {

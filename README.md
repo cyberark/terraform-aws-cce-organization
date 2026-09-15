@@ -206,6 +206,7 @@ sca = {
   enable     = true
   sso_enable = false  # Set to true for AWS IAM Identity Center integration
   sso_region = "us-east-1"  # Required if sso_enable = true
+  # add_permissions_to_manage_cluster = true  # optional EKS permissions (mgmt account + passed to add-account)
 }
 ```
 
@@ -215,6 +216,7 @@ sca = {
 * IAM policy: `SCAPolicy-{account-id}-{tenant-id}`
 * IAM permissions policy: `SCAPermissionsPolicy-{account-id}-{tenant-id}` (when `sso_enable = false`)
 * IAM SSO policy: `SCASSOPermissionsPolicy-{account-id}-{tenant-id}` (when `sso_enable = true`)
+* (Optional) IAM policy for EKS cluster management when `add_permissions_to_manage_cluster = true`
 
 **Use Cases**:
 
@@ -231,7 +233,7 @@ sca = {
 | `organization_root_id` | AWS organization root ID | `string` | Yes | - |
 | `display_name` | Display name for the organization | `string` | No | `null` |
 | `sia` | SIA configuration | `object` | No | `{ enable = false }` |
-| `sca` | SCA configuration | `object` | No | `{ enable = false, sso_enable = false, sso_region = null }` |
+| `sca` | SCA configuration (includes optional `add_permissions_to_manage_cluster` for EKS) | `object` | No | `{ enable = false, sso_enable = false, sso_region = null, add_permissions_to_manage_cluster = false }` |
 | `secrets_hub` | Secrets Hub configuration | `object` | No | `{ enable = false, secrets_manager_regions = [] }` |
 
 ### Service Configuration Objects
@@ -248,9 +250,11 @@ sia = {
 
 ```hcl
 sca = {
-  enable     = bool    # Enable Secure Cloud Access
-  sso_enable = bool    # Enable AWS IAM Identity Center integration
-  sso_region = string  # IAM Identity Center region (required if sso_enable = true)
+  enable                            = bool    # Enable Secure Cloud Access
+  sso_enable                        = bool    # Enable AWS IAM Identity Center integration
+  sso_region                        = string  # IAM Identity Center region (required if sso_enable = true)
+  role_name                         = string  # Optional IAM role name prefix
+  add_permissions_to_manage_cluster = bool    # Optional EKS permissions; stored as addPermissionsToManageCluster for member accounts
 }
 ```
 

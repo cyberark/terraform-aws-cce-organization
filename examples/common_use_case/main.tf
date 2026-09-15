@@ -38,6 +38,7 @@ module "cce_org" {
     enable     = true
     sso_enable = var.sca_sso_enable
     sso_region = var.sca_sso_enable ? var.sca_sso_region : null
+    # add_permissions_to_manage_cluster = true  # optional EKS; passed to add-account via org parameters
   }
 
   # Note: SIA is not enabled in this common use case

@@ -7,6 +7,7 @@ This example demonstrates a typical production configuration that most enterpris
 * Onboards your AWS organization to CCE
 * Enables **Secure Cloud Access (SCA)** for federated identity and access management
 * **Does NOT** enable SIA (can be added later if needed)
+* Optional: set `add_permissions_to_manage_cluster = true` on the org module for EKS permissions (management account and member accounts via add-account)
 
 ## Why This Configuration
 

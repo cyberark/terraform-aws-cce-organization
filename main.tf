@@ -43,11 +43,12 @@ locals {
 
     var.sca.enable ? [{
       service_name = "sca"
-      version      = "0.0.4"
+      version      = "0.0.6"
       resources = {
-        scaPowerRoleArn = module.sca[0].deployed_resources.main,
-        ssoEnable       = tostring(var.sca.sso_enable),
-        ssoRegion       = var.sca.sso_enable ? var.sca.sso_region : null
+        scaPowerRoleArn               = module.sca[0].deployed_resources.main,
+        ssoEnable                     = tostring(var.sca.sso_enable),
+        ssoRegion                     = var.sca.sso_enable ? var.sca.sso_region : null
+        addPermissionsToManageCluster = var.sca.add_permissions_to_manage_cluster
       }
     }] : [],
 
@@ -110,15 +111,16 @@ module "sia" {
 }
 
 module "sca" {
-  source                 = "./modules/sca"
-  sca_service_stage      = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_stage
-  sca_service_account_id = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_account_id
-  sca_service_region     = local.sca_service_region
-  tenant_id              = local.tenant_id
-  sso_enable             = var.sca.sso_enable
-  sso_region             = var.sca.sso_enable ? var.sca.sso_region : null
-  custom_role_name       = var.sca.role_name
-  count                  = var.sca.enable ? 1 : 0
+  source                            = "./modules/sca"
+  sca_service_stage                 = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_stage
+  sca_service_account_id            = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.sca.service_account_id
+  sca_service_region                = local.sca_service_region
+  tenant_id                         = local.tenant_id
+  sso_enable                        = var.sca.sso_enable
+  sso_region                        = var.sca.sso_enable ? var.sca.sso_region : null
+  custom_role_name                  = var.sca.role_name
+  add_permissions_to_manage_cluster = var.sca.add_permissions_to_manage_cluster
+  count                             = var.sca.enable ? 1 : 0
 }
 
 # Wait 10 seconds after all modules complete to allow asynchronous processes to finish

@@ -47,3 +47,9 @@ variable "custom_role_name" {
   nullable    = true
 }
 
+variable "add_permissions_to_manage_cluster" {
+  description = "When true, attaches EKS cluster management permissions (list/describe clusters, access entries) to the SCA cross-account role."
+  type        = bool
+  default     = false
+}
+
