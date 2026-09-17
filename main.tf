@@ -8,7 +8,7 @@ terraform {
     }
     idsec = {
       source  = "cyberark/idsec"
-      version = "0.10.0"
+      version = "0.11.0"
     }
     time = {
       source  = "hashicorp/time"
@@ -44,12 +44,16 @@ locals {
     var.sca.enable ? [{
       service_name = "sca"
       version      = "0.0.6"
-      resources = {
-        scaPowerRoleArn               = module.sca[0].deployed_resources.main,
-        ssoEnable                     = tostring(var.sca.sso_enable),
-        ssoRegion                     = var.sca.sso_enable ? var.sca.sso_region : null
-        addPermissionsToManageCluster = var.sca.add_permissions_to_manage_cluster
-      }
+      resources = merge(
+        {
+          scaPowerRoleArn = module.sca[0].deployed_resources.main,
+          ssoEnable       = tostring(var.sca.sso_enable),
+          ssoRegion       = var.sca.sso_enable ? var.sca.sso_region : null
+        },
+        var.sca.add_permissions_to_manage_cluster ? {
+          addPermissionsToManageCluster = var.sca.add_permissions_to_manage_cluster
+        } : {}
+      )
     }] : [],
 
     var.secrets_hub.enable ? [{
@@ -57,8 +61,6 @@ locals {
       version      = "0.0.7"
       resources = {
         "SecretsHubCustomerAccessRole" = module.secrets_hub[0].deployed_resources.main,
-        "SecretsHubGlobalRole"         = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.secrets_hub.global_role_arn
-
       }
 
     }] : []

@@ -4,7 +4,15 @@
 *.tfstate.*
 *.tfplan
 *.out
+tests/fixtures/apply_*/
 MODULE_DOCUMENTATION.md
+
+# Python / test artifacts
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+test-results.xml
 .idea/
 package*
 .remarkrc.json
