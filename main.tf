@@ -58,7 +58,7 @@ locals {
 
     var.secrets_hub.enable ? [{
       service_name = "secrets_hub"
-      version      = "0.0.7"
+      version      = "0.0.8"
       resources = {
         "SecretsHubCustomerAccessRole" = module.secrets_hub[0].deployed_resources.main,
       }
