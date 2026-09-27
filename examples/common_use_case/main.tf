@@ -8,7 +8,7 @@ terraform {
     }
     idsec = {
       source  = "cyberark/idsec"
-      version = "0.11.0"
+      version = "0.12.0"
     }
   }
 }
@@ -24,7 +24,7 @@ provider "idsec" {
 
 module "cce_org" {
   source  = "cyberark/cce-organization/aws"
-  version = "0.2.1"
+  version = "0.4.4"
 
   # Organization configuration
   organization_id       = var.organization_id

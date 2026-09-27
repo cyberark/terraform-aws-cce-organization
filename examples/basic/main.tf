@@ -15,7 +15,7 @@ provider "aws" {
 
 module "cce_org" {
   source  = "cyberark/cce-organization/aws"
-  version = "0.2.1"
+  version = "0.4.4"
 
   organization_id       = var.organization_id
   management_account_id = var.management_account_id
