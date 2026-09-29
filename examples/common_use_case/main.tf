@@ -18,7 +18,7 @@ provider "aws" {
 }
 
 provider "idsec" {
-  # Configure your CyberArk credentials here or via environment variables
+  # Configure your Idira credentials here or via environment variables
   # See: https://registry.terraform.io/providers/cyberark/idsec/latest/docs
 }
 
@@ -42,7 +42,7 @@ module "cce_org" {
   }
 
   # Note: SIA is not enabled in this common use case
-  # It can be added later by change the value of enable to true:
+  # It can be added later by changing the **enable** value to true:
   sia = {
     enable = false
   }

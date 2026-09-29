@@ -18,7 +18,7 @@ provider "aws" {
 }
 
 provider "idsec" {
-  # Configure your CyberArk credentials here or via environment variables
+  # Configure your Idira credentials here or via environment variables
   # See: https://registry.terraform.io/providers/cyberark/idsec/latest/docs
 }
 

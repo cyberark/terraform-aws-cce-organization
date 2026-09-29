@@ -1,5 +1,5 @@
 output "deployed_resources" {
-  description = "Map of deployed resource ARNs and configuration"
+  description = "A map of deployed resource ARNs and configuration."
   value = {
     main                          = aws_iam_role.sca_cross_account_assume_role.arn
     ssoEnable                     = var.sso_enable
@@ -9,7 +9,7 @@ output "deployed_resources" {
 }
 
 output "module_ready" {
-  description = "List of resource identifiers indicating the module is ready"
+  description = "A list of resource identifiers indicating the module is ready."
   value = compact([
     aws_iam_role.sca_cross_account_assume_role.arn,
     aws_iam_policy.sca_cross_account_policy.arn,

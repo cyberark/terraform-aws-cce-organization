@@ -3,7 +3,7 @@
 # ============================================
 
 variable "organization_id" {
-  description = "The AWS Organization ID"
+  description = "The AWS organization ID."
   type        = string
 
   validation {
@@ -13,7 +13,7 @@ variable "organization_id" {
 }
 
 variable "management_account_id" {
-  description = "The AWS Management Account ID"
+  description = "The AWS management account ID."
   type        = string
 
   validation {
@@ -23,7 +23,7 @@ variable "management_account_id" {
 }
 
 variable "organization_root_id" {
-  description = "The AWS organization root account id"
+  description = "The AWS organization root account ID."
   type        = string
 
   validation {
@@ -37,7 +37,7 @@ variable "organization_root_id" {
 # ============================================
 
 variable "display_name" {
-  description = "The display name for the AWS organization"
+  description = "The display name for the AWS organization."
   type        = string
   default     = null
 }

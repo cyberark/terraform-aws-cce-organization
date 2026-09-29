@@ -1,6 +1,6 @@
 # Example 1: Basic CCE Organization Onboarding
 
-This example demonstrates the minimal configuration required to onboard an AWS organization to CCE (Connect Cloud Environments) with at least one service enabled.
+This example demonstrates the minimal configuration required to onboard an AWS organization to Connect Cloud Environments (CCE) with at least one service enabled.
 
 ## What This Example Does
 
@@ -73,6 +73,6 @@ This example outputs:
 
 After successful deployment:
 
-1. Verify the organization appears in your CCE console
-2. CCE will begin scanning your organization structure
+1. Verify the organization appears in your CCE console.
+2. CCE scans your organization's structure.
 3. To enable additional services, see [full\_services](../full_services/) or [common\_use\_case](../common_use_case/)

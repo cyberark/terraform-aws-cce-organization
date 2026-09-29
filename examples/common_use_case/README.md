@@ -5,7 +5,7 @@ This example demonstrates a typical production configuration that most enterpris
 ## What This Example Does
 
 * Onboards your AWS organization to CCE
-* Enables **Secure Cloud Access (SCA)** for federated identity and access management
+* Enables **Secure Cloud Access (SCA)** for identity federation and access management
 * **Does NOT** enable SIA (can be added later if needed)
 * Optional: set `add_permissions_to_manage_cluster = true` on the org module for EKS permissions (management account and member accounts via add-account)
 
@@ -34,7 +34,7 @@ Automatically enabled - provides organization scanning and account discovery.
 
 * Creates IAM role for SAML provider and role management
 * **SSO Integration**: Optional (disabled by default in this example)
-* Enables federated access with CyberArk Identity management
+* Enables federated access with Idira Identity management
 * Manages IAM roles and policies for end users
 
 ## Usage
@@ -110,16 +110,16 @@ sia = {
 
 After successful deployment:
 
-1. Verify services appear in your CCE console
-2. Configure SCA policies for federated access
-3. Set up user access policies in CyberArk Identity management
-4. Monitor CCE for security insights
+1. Verify services appear in CCE.
+2. Configure SCA policies for federated access.
+3. Set up user access policies in Idira Identity management.
+4. Monitor CCE for security insights.
 
 ## Cost Considerations
 
 This configuration:
 
 * Creates IAM roles and policies (no direct AWS cost)
-* Requires CyberArk service licenses
+* Requires Idira service licenses
 * Generates CloudTrail events for auditing
-* More cost-effective than full services deployment
+* Is more cost-effective than full services deployment
