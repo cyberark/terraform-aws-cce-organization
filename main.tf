@@ -8,7 +8,7 @@ terraform {
     }
     idsec = {
       source  = "cyberark/idsec"
-      version = "0.12.0"
+      version = "0.12.1"
     }
     time = {
       source  = "hashicorp/time"
@@ -145,6 +145,7 @@ resource "idsec_cce_aws_organization" "create_org" {
   organization_root_id           = var.organization_root_id
   scan_organization_role_arn     = module.cce[0].deployed_resources.main
   cross_account_role_external_id = local.role_external_id
+  cce_version                    = "0.0.1"
   count                          = local.at_least_1_service_enabled ? 1 : 0
 
   # Wait for sleep resource to complete (which waits for all modules + 10 seconds)
