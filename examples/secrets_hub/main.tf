@@ -24,7 +24,7 @@ provider "idsec" {
 
 module "cce_org" {
   source  = "cyberark/cce-organization/aws"
-  version = "0.5.0"
+  version = "0.5.1"
 
   # Organization configuration
   organization_id       = var.organization_id
