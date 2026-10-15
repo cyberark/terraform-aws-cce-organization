@@ -155,11 +155,6 @@ resource "idsec_cce_aws_organization" "create_org" {
 
   # Service-specific parameters (separate from resources)
   service_parameters = merge(
-    var.sca.enable ? {
-      sca = {
-        sca_service_region = local.sca_service_region
-      }
-    } : {},
     # Secrets Hub parameters
     var.secrets_hub.enable != false ? {
       secrets_hub = {
