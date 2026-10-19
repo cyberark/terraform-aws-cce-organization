@@ -9,4 +9,5 @@ display_name          = "My organization"
 sca_sso_enable = false
 # sca_sso_region is only required when sca_sso_enable = true
 # sca_sso_region = "us-east-1"
+# If you are using an IAM Identity Center delegated administrator account and sca_sso_enable = true, set the management_account_id value to the delegated administrator account ID.
 

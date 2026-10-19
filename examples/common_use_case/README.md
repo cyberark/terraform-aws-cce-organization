@@ -96,9 +96,11 @@ sca_sso_enable = true
 sca_sso_region = "us-east-1"  # Your Identity Center region
 ```
 
+If AWS IAM Identity Center is managed by a delegated administrator account, set the `management_account_id` value to the delegated administrator account ID, instead of the management account ID.
+
 ### Add SIA Later
 
-If you later need just-in-time privileged access for EC2:
+If you need just-in-time privileged access for EC2:
 
 ```hcl
 sia = {

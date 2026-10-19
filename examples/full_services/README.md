@@ -84,6 +84,18 @@ This example outputs all IAM role ARNs created by the module:
 * `dpa_role_arn`: IAM role ARN for Secure Infrastructure Access (SIA) - note: output name uses 'dpa' for backward compatibility
 * `sca_role_arn`: IAM role ARN for Secure Cloud Access
 
+## IAM Identity Center Delegated Administrator
+
+If your organization has delegated administration of AWS IAM Identity Center to a
+dedicated account, set `management_account_id` to that **delegated administrator
+account ID** instead of the management account ID. SCA resources (IAM role, SAML
+provider, `SCASSOPermissionsPolicy`) will be deployed in that account.
+
+```hcl
+management_account_id = "210987654321"  # delegated administrator account ID
+sca_sso_region        = "us-east-1"
+```
+
 ## Cost Considerations
 
 Enabling all services will:

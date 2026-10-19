@@ -38,6 +38,7 @@ module "cce_org" {
   }
 
   # Enable SCA (Secure Cloud Access) with SSO
+  # Note: If SCA resources are deployed in a delegated administrator account instead of the management account, enter the delegated administrator account ID in the management_account_id field.
   sca = {
     enable     = true
     sso_enable = true

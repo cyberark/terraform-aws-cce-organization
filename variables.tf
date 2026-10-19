@@ -13,7 +13,10 @@ variable "organization_id" {
 }
 
 variable "management_account_id" {
-  description = "The AWS management account ID."
+  description = <<-EOT
+    The AWS management account ID.
+    Note: If SCA resources are deployed in a delegated administrator account instead of the management account, enter the delegated administrator account ID.
+  EOT
   type        = string
 
   validation {

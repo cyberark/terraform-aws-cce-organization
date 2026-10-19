@@ -4,7 +4,7 @@ variable "organization_id" {
 }
 
 variable "management_account_id" {
-  description = "The AWS management account ID."
+  description = "The AWS management account ID. Note: If SCA resources are deployed in a delegated administrator account instead of a management account, enter the delegated administrator account ID."
   type        = string
 }
 
