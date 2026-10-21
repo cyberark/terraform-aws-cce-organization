@@ -61,6 +61,7 @@ locals {
       version      = "0.0.8"
       resources = {
         "SecretsHubCustomerAccessRole" = module.secrets_hub[0].deployed_resources.main,
+        "SecretsHubGlobalRole"         = data.idsec_cce_aws_tenant_service_details.get_tenant_data.services_details.secrets_hub.global_role_arn
       }
 
     }] : []
