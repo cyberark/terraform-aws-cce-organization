@@ -44,16 +44,12 @@ locals {
     var.sca.enable ? [{
       service_name = "sca"
       version      = "0.0.6"
-      resources = merge(
-        {
-          scaPowerRoleArn = module.sca[0].deployed_resources.main,
-          ssoEnable       = tostring(var.sca.sso_enable),
-          ssoRegion       = var.sca.sso_enable ? var.sca.sso_region : null
-        },
-        var.sca.add_permissions_to_manage_cluster ? {
-          addPermissionsToManageCluster = var.sca.add_permissions_to_manage_cluster
-        } : {}
-      )
+      resources = {
+        scaPowerRoleArn               = module.sca[0].deployed_resources.main,
+        ssoEnable                     = tostring(var.sca.sso_enable),
+        ssoRegion                     = var.sca.sso_enable ? var.sca.sso_region : null
+        addPermissionsToManageCluster = var.sca.add_permissions_to_manage_cluster
+      }
     }] : [],
 
     var.secrets_hub.enable ? [{
