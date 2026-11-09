@@ -60,13 +60,14 @@ variable "sia" {
 }
 
 variable "sca" {
-  description = "Configuration for the SCA (Secure Cloud Access) feature. add_permissions_to_manage_cluster stores addPermissionsToManageCluster in org onboarding parameters for member-account add-account modules (EKS permissions on mgmt account role when true)."
+  description = "Configuration for the SCA (Secure Cloud Access) feature. add_permissions_to_manage_cluster stores addPermissionsToManageCluster in org onboarding parameters for member-account add-account modules (EKS permissions on mgmt account role when true). enable_extended_cli_sessions stores enableExtendedCliSessions in org onboarding parameters and attaches optional IAM OIDC-provider permissions for the AWS CLI credentials extension flow (IAM organizations only, sso_enable = false)."
   type = object({
     enable                            = optional(bool, true)
     sso_enable                        = optional(bool, false)
     sso_region                        = optional(string, null)
     role_name                         = optional(string, null)
     add_permissions_to_manage_cluster = optional(bool, false)
+    enable_extended_cli_sessions      = optional(bool, false)
   })
   default = {
     enable                            = false
@@ -74,11 +75,17 @@ variable "sca" {
     sso_region                        = null
     role_name                         = null
     add_permissions_to_manage_cluster = false
+    enable_extended_cli_sessions      = false
   }
 
   validation {
     condition     = var.sca.sso_enable == false ? true : var.sca.sso_region != null
     error_message = "sso_region is required when sso_enable is set to true."
+  }
+
+  validation {
+    condition     = var.sca.enable_extended_cli_sessions == false || var.sca.sso_enable == false
+    error_message = "enable_extended_cli_sessions is only supported for IAM organizations; it cannot be enabled when sso_enable is true (AWS IAM Identity Center)."
   }
 }
 

@@ -39,6 +39,7 @@ module "cce_org" {
     sso_enable = var.sca_sso_enable
     sso_region = var.sca_sso_enable ? var.sca_sso_region : null
     # add_permissions_to_manage_cluster = true  # optional EKS; passed to add-account via org parameters
+    # enable_extended_cli_sessions      = true  # optional AWS CLI extension (OIDC); IAM orgs only (sso_enable = false)
   }
 
   # Note: SIA is not enabled in this common use case

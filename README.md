@@ -207,6 +207,7 @@ sca = {
   sso_enable = false  # Set to true for AWS IAM Identity Center integration
   sso_region = "us-east-1"  # Required if sso_enable = true
   # add_permissions_to_manage_cluster = true  # optional EKS permissions (mgmt account + passed to add-account)
+  # enable_extended_cli_sessions      = true  # optional AWS CLI extension (OIDC); IAM orgs only (sso_enable = false)
 }
 ```
 
@@ -217,6 +218,7 @@ sca = {
 * IAM permissions policy: `SCAPermissionsPolicy-{account-id}-{tenant-id}` (when `sso_enable = false`)
 * IAM SSO policy: `SCASSOPermissionsPolicy-{account-id}-{tenant-id}` (when `sso_enable = true`)
 * (Optional) IAM policy for EKS cluster management when `add_permissions_to_manage_cluster = true`
+* (Optional) IAM policy for the AWS CLI credentials extension (OIDC provider create/get/delete) when `enable_extended_cli_sessions = true` and `sso_enable = false`
 
 **Use Cases**:
 
@@ -233,7 +235,7 @@ sca = {
 | `organization_root_id` | AWS organization root ID | `string` | Yes | - |
 | `display_name` | Display name for the organization | `string` | No | `null` |
 | `sia` | SIA configuration | `object` | No | `{ enable = false }` |
-| `sca` | SCA configuration (includes optional `add_permissions_to_manage_cluster` for EKS) | `object` | No | `{ enable = false, sso_enable = false, sso_region = null, add_permissions_to_manage_cluster = false }` |
+| `sca` | SCA configuration (includes optional `add_permissions_to_manage_cluster` for EKS and `enable_extended_cli_sessions` for the AWS CLI credentials extension) | `object` | No | `{ enable = false, sso_enable = false, sso_region = null, add_permissions_to_manage_cluster = false, enable_extended_cli_sessions = false }` |
 | `secrets_hub` | Secrets Hub configuration | `object` | No | `{ enable = false, secrets_manager_regions = [] }` |
 
 ### Service Configuration Objects
@@ -255,6 +257,7 @@ sca = {
   sso_region                        = string  # IAM Identity Center region (required if sso_enable = true)
   role_name                         = string  # Optional IAM role name prefix
   add_permissions_to_manage_cluster = bool    # Optional EKS permissions; stored as addPermissionsToManageCluster for member accounts
+  enable_extended_cli_sessions      = bool    # Optional AWS CLI extension (OIDC); IAM orgs only; stored as enableExtendedCliSessions for member accounts
 }
 ```
 

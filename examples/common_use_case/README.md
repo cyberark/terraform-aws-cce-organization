@@ -8,6 +8,7 @@ This example demonstrates a typical production configuration that most enterpris
 * Enables **Secure Cloud Access (SCA)** for identity federation and access management
 * **Does NOT** enable SIA (can be added later if needed)
 * Optional: set `add_permissions_to_manage_cluster = true` on the org module for EKS permissions (management account and member accounts via add-account)
+* Optional: set `enable_extended_cli_sessions = true` on the org module for the AWS CLI credentials extension (OIDC); IAM organizations only (`sso_enable = false`), and passed to member accounts via add-account
 
 ## Why This Configuration
 
